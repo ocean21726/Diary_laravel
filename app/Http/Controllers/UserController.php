@@ -44,13 +44,49 @@ class UserController extends Controller
             $userData = [
                 'user_idx' => $user->user_idx,
                 'user_id' => $user->user_id,
-                'user_nick' => $user->nick
+                'user_nick' => $user->user_nick
             ];
             return response()->object(['user' => $userData, 'token' => $token]);
         } catch (\Exception $e) {
             \Log::info('UserSignUpError: '.$e->getMessage());
             \DB::rollBack();
             return response()->fail('회원가입 실패');
+        }
+    }
+
+    public function getUserIdCheck()
+    {
+        $id = request()->id;
+        $result = $this->userRepository->getUserIdCheck($id);
+
+        if ($result) {
+            return response()->success('사용할 수 있는 ID입니다.');
+        } else {
+            return response()->fail('사용할 수 없는 ID입니다.');
+        }
+    }
+
+    public function postUserLogin()
+    {
+        $id = request()->id;
+        $password = request()->password;
+
+        try {
+            $user = \DB::transaction(function () use ($id, $password) {
+                return $this->userRepository->postUserLogin($id, $password);
+            });
+            \DB::commit();
+            $token = $this->jwt($user);
+            $userData = [
+                'user_idx' => $user->user_idx,
+                'user_id' => $user->user_id,
+                'user_nick' => $user->user_nick
+            ];
+            return response()->object(['user' => $userData, 'token' => $token]);
+        } catch (\Exception $e) {
+            \Log::info('UserLoginError: '.$e->getMessage());
+            \DB::rollBack();
+            return response()->fail('로그인 실패');
         }
     }
 }

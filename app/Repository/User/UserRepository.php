@@ -25,4 +25,29 @@ class UserRepository
             return User::find($user->user_idx);
         }
     }
+
+    public function getUserIdCheck($id)
+    {
+        $idCheck = User::where('user_id', $id)->first();
+        if ($idCheck) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public function postUserLogin($id, $password)
+    {
+        $user = User::where('user_id', $id)->first();
+
+        if (!$user) {
+            throw new \Exception('존재하지 않는 회원입니다.');
+        } else {
+            if (Hash::check($password, $user->user_password)) {
+                return $user;
+            } else {
+                throw new \Exception('비밀번호 오류');
+            }
+        }
+    }
 }

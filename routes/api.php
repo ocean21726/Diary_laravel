@@ -17,4 +17,6 @@ use App\Http\Controllers\UserController;
 
 Route::prefix('user')->group(function () {
     Route::post('sign-up', [UserController::class, 'postUserSignUp']);
+    Route::get('id-check', [UserController::class, 'getUserIdCheck']);
+    Route::post('login', [UserController::class, 'postUserLogin']);
 });
