@@ -50,4 +50,14 @@ class UserRepository
             }
         }
     }
+
+    public function getUserFind($userId, $searchId)
+    {
+        $user = User::where('user_id', $searchId)->whereNotIn('user_id', [$userId])->first();
+        if ($user) {
+            return [$user, true];
+        } else {
+            return [null, false];
+        }
+    }
 }

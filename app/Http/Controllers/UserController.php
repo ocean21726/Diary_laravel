@@ -6,6 +6,7 @@ use App\Models\User;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use App\Repository\User\UserRepository;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -87,6 +88,18 @@ class UserController extends Controller
             \Log::info('UserLoginError: '.$e->getMessage());
             \DB::rollBack();
             return response()->fail('로그인 실패');
+        }
+    }
+
+    public function getUserFind()
+    {
+        $userId = Auth::user()->user_id;
+        $searchId = request()->searchId;
+        list($result, $status) = $this->userRepository->getUserFind($userId, $searchId);
+        if ($status) {
+            return response()->object($result);
+        } else {
+            return response()->fail('초대할 수 없는 ID입니다.');
         }
     }
 }
