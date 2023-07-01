@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DiaryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,4 +21,9 @@ Route::prefix('user')->group(function () {
     Route::get('id-check', [UserController::class, 'getUserIdCheck']);
     Route::post('login', [UserController::class, 'postUserLogin']);
     Route::get('find', [UserController::class, 'getUserFind'])->middleware('jwt.auth');
+});
+
+Route::prefix('diary')->group(function () {
+    Route::post('create', [DiaryController::class, 'postDiaryCreate'])->middleware('jwt.auth');
+    Route::get('list', [DiaryController::class, 'getDiaryList'])->middleware('jwt.auth');
 });
